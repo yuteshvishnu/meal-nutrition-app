@@ -1,26 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Meal Nutrition Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 40px;
+      color: #333;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #27ae60;
+    }
+    pre {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px #ccc;
+      margin-top: 20px;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 <body>
-  <h2>🥗 Meal Nutrition Calculator</h2>
-  <input id="input" placeholder="e.g. 1,2 4,1 9,3" size="50">
-  <button onclick="runCalc()">Calculate</button>
-  <pre id="output"></pre>
 
+  <h1>🥗 Meal Nutrition Calculator</h1>
+  <p>Enter food item numbers and portions like this:</p>
+  <code>0,2 4,1 9,3</code>
+
+  <textarea id="inputBox" placeholder="Enter item number and portions (e.g., 0,2 4,1)"></textarea>
+  <button onclick="runcalc()">Calculate</button>
+
+  <h2>📊 Result</h2>
+  <pre id="outputArea">Result will appear here...</pre>
+
+  <!-- Load Emscripten-generated JavaScript -->
   <script src="meal_calc.js"></script>
   <script>
+    let calculateMeal;
+
     var Module = {
       onRuntimeInitialized: function () {
-        window.runCalc = function () {
-          const input = document.getElementById("input").value;
-          const result = Module.ccall('processMeal', 'string', ['string'], [input]);
-          document.getElementById("output").textContent = result;
-        };
+        calculateMeal = Module.cwrap('calculate_meal', 'string', ['string']);
       }
     };
+
+    function runcalc() {
+      const input = document.getElementById('inputBox').value.trim();
+      if (!input) {
+        document.getElementById('outputArea').textContent = "Please enter some input.";
+        return;
+      }
+
+      try {
+        const result = calculateMeal(input);
+        document.getElementById('outputArea').textContent = result;
+      } catch (err) {
+        document.getElementById('outputArea').textContent = "Error: " + err.message;
+      }
+    }
   </script>
 </body>
 </html>
+
