@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Meal Nutrition Calculator</title>
+</head>
+<body>
+  <h2>🥗 Meal Nutrition Calculator</h2>
+  <input id="input" placeholder="e.g. 1,2 4,1 9,3" size="50">
+  <button onclick="runCalc()">Calculate</button>
+  <pre id="output"></pre>
+
+  <script src="meal_calc.js"></script>
+  <script>
+    var Module = {
+      onRuntimeInitialized: function () {
+        window.runCalc = function () {
+          const input = document.getElementById("input").value;
+          const result = Module.ccall('processMeal', 'string', ['string'], [input]);
+          document.getElementById("output").textContent = result;
+        };
+      }
+    };
+  </script>
+</body>
+</html>
